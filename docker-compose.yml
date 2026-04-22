@@ -15,8 +15,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-    # env_file:
-    #   - .env.local
+    env_file:
+      - .env
 
   # Optional Nginx if you want to run Nginx in Docker as reverse proxy
   nginx:
