@@ -10,11 +10,13 @@ export default async function WishPage({
   const { slug } = await params;
   const supabase = await createClient();
 
+  const decodedSlug = decodeURIComponent(slug);
+
   // Fetch wish data with related template and media
   const { data: wish, error } = await supabase
     .from('wishes')
     .select('*, templates(*), wish_media(*)')
-    .eq('slug', slug)
+    .eq('slug', decodedSlug)
     .single();
 
   if (error || !wish) {
