@@ -16,6 +16,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Database Seed (Update Templates)
+        run: npm run seed
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -54,6 +63,4 @@ jobs:
             
             # Pull the latest image and restart
             docker compose pull web
-            npm install
-            npm run seed
             docker compose up -d
