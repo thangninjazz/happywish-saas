@@ -52,6 +52,14 @@ const templates = [
     price: 30000,
     is_active: true,
     thumbnail_url: 'https://images.unsplash.com/photo-1530652101053-8c0db4fbb5de?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+    slug: 'special-love',
+    title: 'Special Love (Particle Heart)',
+    category: 'romantic',
+    price: 150000,
+    is_active: true,
+    thumbnail_url: 'https://images.unsplash.com/photo-1518196775789-afc6294f217a?q=80&w=600&auto=format&fit=crop'
   }
 ];
 

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Gift, Play, Pause } from 'lucide-react';
 import Image from 'next/image';
+import { HeartCanvas } from './HeartCanvas';
 
 export interface Wish {
   music_url?: string;
@@ -150,7 +151,15 @@ const PublicGreeting = memo(function PublicGreeting({ wish, isPreview = false }:
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#0a0a0a]" style={{ backgroundColor: isOpen ? wish.theme_color + '10' : '#0a0a0a' }}>
+    <div 
+      className="min-h-screen relative overflow-hidden transition-colors duration-1000" 
+      style={{ 
+        background: templateSlug === 'special-love' && isOpen 
+          ? 'linear-gradient(135deg, #ff758c, #ff7eb3)' 
+          : isOpen ? wish.theme_color + '10' : '#0a0a0a' 
+      }}
+    >
+      {templateSlug === 'special-love' && isOpen && <HeartCanvas />}
       <AnimatePresence mode="wait">
         {!isOpen ? (
           <motion.div
