@@ -47,6 +47,7 @@ export default async function AdminLayout({
           <div className="bg-muted/50 rounded-2xl p-4 mb-8 text-left space-y-2 border border-border/50">
             <p className="text-sm text-muted-foreground mt-1">Email: <span className="font-mono text-foreground">{user?.email}</span></p>
             <p className="text-sm text-muted-foreground mt-1">User ID: <span className="font-mono text-xs text-foreground">{user?.id}</span></p>
+            <p className="text-sm text-muted-foreground mt-1">Supabase Target: <span className="font-mono text-xs text-foreground">{process.env.NEXT_PUBLIC_SUPABASE_URL?.split('.')[0]}...</span></p>
             <p className="text-sm text-muted-foreground">Role nhận diện: <span className="font-bold text-destructive">{userData?.role || 'null/undefined'}</span></p>
           </div>
 

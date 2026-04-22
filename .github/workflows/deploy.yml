@@ -78,5 +78,5 @@ jobs:
             
             # Pull the latest image and restart
             docker compose pull web
-            docker compose up -d
+            docker compose up -d --force-recreate
             docker compose restart nginx
