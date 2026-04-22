@@ -103,62 +103,68 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
             <p className="mt-12 text-sm opacity-50 animate-pulse">Tap to open</p>
           </motion.div>
         ) : (
-          <motion.div
-            key="content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative z-10"
-          >
-            {audio && (
-              <button 
-                onClick={toggleAudio}
-                className="absolute top-6 right-6 p-3 rounded-full bg-background/50 backdrop-blur-md border shadow-sm hover:bg-background/80 transition-colors z-50"
-              >
-                {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-              </button>
-            )}
-
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 1 }}
+              className="mb-8"
             >
-              <h1 className="text-5xl md:text-7xl font-serif mb-6" style={{ color: wish.theme_color }}>
+              <h1 className="text-5xl md:text-8xl font-serif mb-2 bg-gradient-to-b from-foreground to-foreground/50 bg-clip-text text-transparent" style={{ color: wish.theme_color }}>
                 {wish.recipient_name}
               </h1>
+              <div className="h-1 w-24 mx-auto rounded-full" style={{ backgroundColor: wish.theme_color }} />
             </motion.div>
+
+            {/* Image Gallery */}
+            {wish.wish_media && wish.wish_media.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 1.2 }}
+                className="flex gap-4 mb-12 overflow-x-auto py-4 px-2 no-scrollbar max-w-full"
+              >
+                {wish.wish_media.map((media: any, idx: number) => (
+                  <div 
+                    key={idx} 
+                    className="flex-shrink-0 w-64 h-80 rounded-2xl overflow-hidden shadow-2xl border-4 border-white rotate-1 hover:rotate-0 transition-transform duration-500"
+                    style={{ transform: `rotate(${idx % 2 === 0 ? '2deg' : '-2deg'})` }}
+                  >
+                    <img src={media.url} alt="Memory" className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </motion.div>
+            )}
 
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.8, delay: 1.5 }}
-              className="max-w-2xl bg-background/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border mb-12"
+              className="max-w-2xl bg-white/10 backdrop-blur-xl p-10 rounded-[2rem] shadow-2xl border border-white/20 mb-12 relative overflow-hidden group"
             >
-              <p className="text-xl md:text-2xl leading-relaxed whitespace-pre-wrap text-foreground/90 font-medium">
-                {wish.message}
+              <div className="absolute top-0 left-0 w-full h-1 opacity-20 bg-gradient-to-r from-transparent via-white to-transparent" />
+              <p className="text-2xl md:text-3xl leading-relaxed whitespace-pre-wrap text-foreground font-serif italic">
+                "{wish.message}"
               </p>
               
               {wish.sender_name && (
-                <div className="mt-8 text-right">
-                  <p className="text-muted-foreground text-sm uppercase tracking-widest">With love from</p>
-                  <p className="text-2xl font-serif italic mt-1" style={{ color: wish.theme_color }}>
+                <div className="mt-10 text-right">
+                  <p className="text-muted-foreground text-xs uppercase tracking-[0.3em] mb-2">With all my love</p>
+                  <p className="text-3xl font-serif italic" style={{ color: wish.theme_color }}>
                     {wish.sender_name}
                   </p>
                 </div>
               )}
             </motion.div>
             
-            {/* Countdown / Event Date Widget (Basic) */}
+            {/* Countdown / Event Date Widget (Premium) */}
             {wish.event_date && (
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 2 }}
-                className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-card shadow-sm border text-sm font-medium"
+                className="px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm font-light tracking-[0.2em] uppercase"
               >
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: wish.theme_color }} />
-                Event Date: {new Date(wish.event_date).toLocaleDateString()}
+                {new Date(wish.event_date).toLocaleDateString('vi-VN', { day: 'numeric', month: 'long', year: 'numeric' })}
               </motion.div>
             )}
           </motion.div>
