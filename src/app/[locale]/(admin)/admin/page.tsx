@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Palette, Gift, ShoppingBag, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { Users, Palette, Gift, ShoppingBag, ArrowUpRight } from 'lucide-react';
+import { ExportReportButton, DetailLink } from '@/components/admin/DashboardActions';
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
@@ -20,15 +21,12 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground mt-1">Chào mừng quay trở lại, đây là tổng quan hệ thống của bạn.</p>
         </div>
-        <button className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">
-          <TrendingUp className="w-4 h-4" />
-          Xuất báo cáo
-        </button>
+        <ExportReportButton />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -67,7 +65,7 @@ export default async function AdminDashboardPage() {
                     <p className="text-sm font-medium">Người dùng mới vừa đăng ký</p>
                     <p className="text-xs text-muted-foreground">user{i}@example.com • {i} giờ trước</p>
                   </div>
-                  <div className="text-xs font-medium text-primary cursor-pointer hover:underline">Chi tiết</div>
+                  <DetailLink label="người dùng" id={i} />
                 </div>
               ))}
             </div>
@@ -89,7 +87,7 @@ export default async function AdminDashboardPage() {
                     <p className="text-sm font-medium">Thanh toán thành công #{1000 + i}</p>
                     <p className="text-xs text-muted-foreground">{(50000 * i).toLocaleString()}đ • {i * 30} phút trước</p>
                   </div>
-                  <div className="px-2 py-1 rounded text-[10px] font-bold uppercase bg-green-100 text-green-700">Hoàn tất</div>
+                  <DetailLink label="đơn hàng" id={1000 + i} />
                 </div>
               ))}
             </div>

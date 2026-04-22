@@ -11,6 +11,8 @@ import {
   LogOut
 } from 'lucide-react';
 
+import { AdminMobileNav } from '@/components/layout/AdminMobileNav';
+
 export default async function AdminLayout({
   children,
 }: {
@@ -84,7 +86,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-muted/30 flex">
-      {/* Sidebar */}
+      {/* Sidebar (Desktop) */}
       <aside className="w-64 bg-card border-r border-border hidden md:flex flex-col sticky top-0 h-screen">
         <div className="p-6 border-b border-border">
           <Link href="/admin" className="flex items-center gap-2 font-bold text-xl tracking-tight">
@@ -129,19 +131,22 @@ export default async function AdminLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-screen">
-        <header className="h-16 border-b border-border bg-card/80 backdrop-blur-md flex items-center px-8 sticky top-0 z-10">
-          <div className="flex-1 font-semibold text-lg">Hệ thống quản trị HappyWish</div>
+      <main className="flex-1 flex flex-col min-h-screen min-w-0">
+        <header className="h-16 border-b border-border bg-card/80 backdrop-blur-md flex items-center px-4 md:px-8 sticky top-0 z-40">
+          <div className="flex items-center gap-4 flex-1">
+            <AdminMobileNav items={navItems} />
+            <div className="font-semibold text-lg truncate">Hệ thống quản trị</div>
+          </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-medium">{user.email}</p>
               <p className="text-xs text-muted-foreground capitalize">{userData.role}</p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-500 border-2 border-background shadow-sm" />
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-500 border-2 border-background shadow-sm shrink-0" />
           </div>
         </header>
 
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           {children}
         </div>
       </main>
