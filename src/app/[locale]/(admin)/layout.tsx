@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from '@/i18n/routing';
+import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/routing';
 import { 
   LayoutDashboard, 
