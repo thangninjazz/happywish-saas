@@ -1,5 +1,5 @@
 -- Users table (extends Supabase Auth users)
-CREATE TABLE public.users (
+CREATE TABLE IF NOT EXISTS public.users (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   full_name TEXT,
@@ -9,7 +9,7 @@ CREATE TABLE public.users (
 );
 
 -- Templates table
-CREATE TABLE public.templates (
+CREATE TABLE IF NOT EXISTS public.templates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   slug TEXT UNIQUE NOT NULL,
   title TEXT NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE public.templates (
 );
 
 -- Wishes table
-CREATE TABLE public.wishes (
+CREATE TABLE IF NOT EXISTS public.wishes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
   template_id UUID REFERENCES public.templates(id) ON DELETE SET NULL,
@@ -42,7 +42,7 @@ CREATE TABLE public.wishes (
 );
 
 -- Wish Media table
-CREATE TABLE public.wish_media (
+CREATE TABLE IF NOT EXISTS public.wish_media (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   wish_id UUID REFERENCES public.wishes(id) ON DELETE CASCADE,
   url TEXT NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE public.wish_media (
 );
 
 -- Orders table
-CREATE TABLE public.orders (
+CREATE TABLE IF NOT EXISTS public.orders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
   wish_id UUID REFERENCES public.wishes(id) ON DELETE CASCADE,
@@ -63,7 +63,7 @@ CREATE TABLE public.orders (
 );
 
 -- Analytics Views table
-CREATE TABLE public.analytics_views (
+CREATE TABLE IF NOT EXISTS public.analytics_views (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   wish_id UUID REFERENCES public.wishes(id) ON DELETE CASCADE,
   ip_hash TEXT NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE public.analytics_views (
 );
 
 -- Coupons table
-CREATE TABLE public.coupons (
+CREATE TABLE IF NOT EXISTS public.coupons (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code TEXT UNIQUE NOT NULL,
   type TEXT DEFAULT 'percent' CHECK (type IN ('percent', 'fixed')),
@@ -93,58 +93,65 @@ ALTER TABLE public.wish_media ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
 
--- Admin helper function (optional but recommended)
--- CREATE OR REPLACE FUNCTION is_admin() RETURNS BOOLEAN AS $$
---   BEGIN
---     RETURN (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin';
---   END;
--- $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Users policies
+DROP POLICY IF EXISTS "Users can view their own data" ON public.users;
 CREATE POLICY "Users can view their own data" ON public.users
   FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Admins can view all users" ON public.users;
 CREATE POLICY "Admins can view all users" ON public.users
   FOR SELECT USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
+DROP POLICY IF EXISTS "Admins can update all users" ON public.users;
 CREATE POLICY "Admins can update all users" ON public.users
   FOR UPDATE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Templates policies
+DROP POLICY IF EXISTS "Active templates are viewable by everyone" ON public.templates;
 CREATE POLICY "Active templates are viewable by everyone" ON public.templates
   FOR SELECT USING (is_active = true);
 
+DROP POLICY IF EXISTS "Admins can manage templates" ON public.templates;
 CREATE POLICY "Admins can manage templates" ON public.templates
   FOR ALL USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Wishes policies
+DROP POLICY IF EXISTS "Users can view their own wishes" ON public.wishes;
 CREATE POLICY "Users can view their own wishes" ON public.wishes
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Active wishes are viewable by everyone" ON public.wishes;
 CREATE POLICY "Active wishes are viewable by everyone" ON public.wishes
   FOR SELECT USING (status = 'active');
 
+DROP POLICY IF EXISTS "Users can manage their own wishes" ON public.wishes;
 CREATE POLICY "Users can manage their own wishes" ON public.wishes
   FOR ALL USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admins can manage all wishes" ON public.wishes;
 CREATE POLICY "Admins can manage all wishes" ON public.wishes
   FOR ALL USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Wish Media policies
+DROP POLICY IF EXISTS "Wish media viewable if wish is viewable" ON public.wish_media;
 CREATE POLICY "Wish media viewable if wish is viewable" ON public.wish_media
   FOR SELECT USING (EXISTS (SELECT 1 FROM public.wishes WHERE id = wish_id));
 
+DROP POLICY IF EXISTS "Admins can manage wish media" ON public.wish_media;
 CREATE POLICY "Admins can manage wish media" ON public.wish_media
   FOR ALL USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Orders policies
+DROP POLICY IF EXISTS "Users can view their own orders" ON public.orders;
 CREATE POLICY "Users can view their own orders" ON public.orders
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admins can view all orders" ON public.orders;
 CREATE POLICY "Admins can view all orders" ON public.orders
   FOR SELECT USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Coupons policies
+DROP POLICY IF EXISTS "Admins can manage coupons" ON public.coupons;
 CREATE POLICY "Admins can manage coupons" ON public.coupons
   FOR ALL USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
