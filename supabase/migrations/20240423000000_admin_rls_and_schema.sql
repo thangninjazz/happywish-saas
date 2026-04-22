@@ -107,9 +107,11 @@ CREATE POLICY "Admins can update all users" ON public.users
   FOR UPDATE USING ((SELECT role FROM public.users WHERE id = auth.uid()) = 'admin');
 
 -- Templates policies
+GRANT SELECT ON public.templates TO anon, authenticated;
+
 DROP POLICY IF EXISTS "Active templates are viewable by everyone" ON public.templates;
 CREATE POLICY "Active templates are viewable by everyone" ON public.templates
-  FOR SELECT USING (is_active = true);
+  FOR SELECT TO public USING (is_active = true);
 
 DROP POLICY IF EXISTS "Admins can manage templates" ON public.templates;
 CREATE POLICY "Admins can manage templates" ON public.templates
