@@ -67,7 +67,7 @@ export default async function DashboardPage() {
                 )}
               </CardContent>
               <CardFooter className="pt-4 flex justify-between border-t gap-2 bg-muted/20">
-                 <Link href={`/${user.id}/${wish.slug}`} target="_blank" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                 <Link href={`/wishes/${wish.slug}`} target="_blank" className={buttonVariants({ variant: "ghost", size: "sm" })}>
                     <ExternalLink size={16} className="mr-1" /> View
                  </Link>
                  {/* 
