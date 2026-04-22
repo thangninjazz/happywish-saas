@@ -44,10 +44,10 @@ export function TemplateCard({ template }: { template: TemplateType }) {
       </CardContent>
       
       <CardFooter className="p-4 pt-0 flex gap-2">
-        <Link href={`/templates/${template.slug}/preview`} className={buttonVariants({ variant: "outline", className: "w-full" })}>
+        <Link href={`/templates/${template.slug}/preview`} className={buttonVariants({ variant: "outline", className: "flex-1 text-xs px-2" })}>
           Preview
         </Link>
-        <Link href={`/create/${template.slug}`} className={buttonVariants({ variant: "default", className: "w-full" })}>
+        <Link href={`/create/${template.slug}`} className={buttonVariants({ variant: "default", className: "flex-1 text-xs px-2" })}>
           Dùng mẫu này
         </Link>
       </CardFooter>
