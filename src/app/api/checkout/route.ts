@@ -3,8 +3,7 @@ import Stripe from 'stripe';
 import { createClient } from '@/lib/supabase/server';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  // @ts-ignore
-  apiVersion: '2023-10-16', 
+  apiVersion: '2026-03-25.dahlia', 
 });
 
 export async function POST(req: Request) {
