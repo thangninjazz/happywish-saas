@@ -15,15 +15,24 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
   const [isOpen, setIsOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [ytId, setYtId] = useState<string | null>(null);
+
+  const getYoutubeId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
 
   useEffect(() => {
-    // Basic music handling (Mock for now, normally use audio API or iframe for YT)
     if (wish.music_url) {
-      // If it's a direct MP3 url, we can use HTMLAudioElement
-      // If YouTube, need an iframe embed. We'll simulate a basic audio for now
-      const a = new Audio('/music/sample.mp3'); // Mock path
-      a.loop = true;
-      setAudio(a);
+      const id = getYoutubeId(wish.music_url);
+      if (id) {
+        setYtId(id);
+      } else {
+        const a = new Audio(wish.music_url);
+        a.loop = true;
+        setAudio(a);
+      }
     }
     
     return () => {
@@ -34,9 +43,9 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
   const handleOpenGift = () => {
     setIsOpen(true);
     triggerConfetti();
+    setIsPlaying(true);
     if (audio) {
       audio.play().catch(e => console.error("Audio play failed:", e));
-      setIsPlaying(true);
     }
   };
 
@@ -67,6 +76,10 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
   };
 
   const toggleAudio = () => {
+    if (ytId) {
+      setIsPlaying(!isPlaying);
+      return;
+    }
     if (!audio) return;
     if (isPlaying) {
       audio.pause();
@@ -110,7 +123,18 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
             transition={{ duration: 1, delay: 0.5 }}
             className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative z-10"
           >
-            {audio && (
+            {ytId && isPlaying && (
+              <div className="hidden">
+                <iframe
+                  width="0"
+                  height="0"
+                  src={`https://www.youtube.com/embed/${ytId}?autoplay=1&loop=1&playlist=${ytId}`}
+                  allow="autoplay"
+                ></iframe>
+              </div>
+            )}
+
+            {(audio || ytId) && (
               <button 
                 onClick={toggleAudio}
                 className="absolute top-6 right-6 p-3 rounded-full bg-background/50 backdrop-blur-md border shadow-sm hover:bg-background/80 transition-colors z-50 text-foreground"

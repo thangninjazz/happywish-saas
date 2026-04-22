@@ -32,6 +32,8 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
     music_url: '',
   });
 
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -44,11 +46,11 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
     setLoading(true);
     
     // 1. Generate unique slug
-    const baseSlug = `${formData.recipient_name.toLowerCase().replace(/\\s+/g, '-')}-${template.slug}`;
+    const baseSlug = `${formData.recipient_name.toLowerCase().replace(/\s+/g, '-')}-${template.slug}`;
     const uniqueSlug = `${baseSlug}-${Math.random().toString(36).substring(2, 7)}`;
 
     // 2. Insert into wishes table
-    const { data, error } = await supabase
+    const { data: wishData, error: wishError } = await supabase
       .from('wishes')
       .insert({
         user_id: user?.id,
@@ -65,15 +67,40 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
       .select()
       .single();
 
-    setLoading(false);
-
-    if (error) {
-      console.error('Error saving wish:', error);
-      alert(`Lỗi khi lưu: ${error.message} (${error.code})`);
+    if (wishError || !wishData) {
+      console.error('Error saving wish:', wishError);
+      alert(`Lỗi khi lưu thiệp: ${wishError?.message} (${wishError?.code})`);
       setLoading(false);
       return;
     }
 
+    // 3. Upload images to Supabase Storage and insert to wish_media
+    if (mediaFiles.length > 0) {
+      for (let i = 0; i < mediaFiles.length; i++) {
+        const file = mediaFiles[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${wishData.id}/${Math.random()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('wish-media')
+          .upload(fileName, file);
+
+        if (!uploadError) {
+          const { data: publicUrlData } = supabase.storage
+            .from('wish-media')
+            .getPublicUrl(fileName);
+
+          await supabase.from('wish_media').insert({
+            wish_id: wishData.id,
+            url: publicUrlData.publicUrl,
+            type: 'image',
+            sort_order: i
+          });
+        }
+      }
+    }
+
+    setLoading(false);
     // 3. Navigate to checkout (Mockup)
     alert('Mock Payment Successful! Your greeting is ready.');
     router.push(`/dashboard`); 
@@ -157,10 +184,7 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
                 <CardContent className="space-y-6">
                   <UploadGallery 
                     maxFiles={10} 
-                    onFilesChange={(files) => {
-                      // Handle files (e.g. upload to Supabase Storage later)
-                      console.log('Files selected:', files);
-                    }} 
+                    onFilesChange={setMediaFiles} 
                   />
 
                   <div className="space-y-2">
