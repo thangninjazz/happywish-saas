@@ -5,15 +5,17 @@ import { Menu, X, LayoutDashboard, Users, Palette, ShoppingBag, Gift, Settings, 
 import { Link } from '@/i18n/routing';
 import { usePathname } from 'next/navigation';
 
-interface NavItem {
-  label: string;
-  href: string;
-  icon: any;
-}
-
-export function AdminMobileNav({ items }: { items: NavItem[] }) {
+export function AdminMobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+
+  const items = [
+    { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { label: 'Người dùng', href: '/admin/users', icon: Users },
+    { label: 'Mẫu thiết kế', href: '/admin/templates', icon: Palette },
+    { label: 'Đơn hàng', href: '/admin/orders', icon: ShoppingBag },
+    { label: 'Lời chúc', href: '/admin/wishes', icon: Gift },
+  ];
 
   return (
     <div className="md:hidden">

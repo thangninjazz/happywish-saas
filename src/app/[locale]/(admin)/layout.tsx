@@ -133,7 +133,7 @@ export default async function AdminLayout({
       <main className="flex-1 flex flex-col min-h-screen min-w-0">
         <header className="h-16 border-b border-border bg-card/80 backdrop-blur-md flex items-center px-4 md:px-8 sticky top-0 z-40">
           <div className="flex items-center gap-4 flex-1">
-            <AdminMobileNav items={navItems} />
+            <AdminMobileNav />
             <div className="font-semibold text-lg truncate">Hệ thống quản trị</div>
           </div>
           <div className="flex items-center gap-4">
