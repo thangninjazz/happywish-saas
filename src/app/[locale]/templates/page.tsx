@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server';
 import { TemplateCard, TemplateType } from '@/components/templates/TemplateCard';
 import { getTranslations } from 'next-intl/server';
 
+export const dynamic = 'force-dynamic';
+
 export default async function TemplatesPage() {
   const supabase = await createClient();
   const t = await getTranslations('HomePage');
