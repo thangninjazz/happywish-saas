@@ -28,7 +28,7 @@ export default async function AdminLayout({
   }
 
   // 2. Role check
-  const { data: userData } = await supabase
+  const { data: userData, error: roleError } = await supabase
     .from('users')
     .select('role')
     .eq('id', user.id)
