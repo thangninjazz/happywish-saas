@@ -22,4 +22,6 @@ jobs:
           script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
             git pull origin main
+            npm install
+            npm run seed
             docker compose up -d --build
