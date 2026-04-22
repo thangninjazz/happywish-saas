@@ -244,7 +244,10 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
               {step < 4 ? (
                 <Button onClick={handleNext}>Next Step</Button>
               ) : (
-                <Button onClick={handleSubmit} disabled={loading || !user}>
+                <Button 
+                  onClick={user ? handleSubmit : () => router.push('/login')} 
+                  disabled={loading}
+                >
                   {loading ? 'Processing...' : (user ? 'Complete & Pay' : 'Login to Continue')}
                 </Button>
               )}

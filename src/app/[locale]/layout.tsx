@@ -37,6 +37,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Header } from "@/components/layout/Header";
+
 export default async function RootLayout({
   children,
   params
@@ -56,7 +58,10 @@ export default async function RootLayout({
     <html lang={locale} className={`${plusJakartaSans.variable} antialiased`}>
       <body className="min-h-screen bg-background font-sans text-foreground">
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <Header />
+          <main>
+            {children}
+          </main>
         </NextIntlClientProvider>
       </body>
     </html>
