@@ -1,6 +1,7 @@
 
 services:
   web:
+    image: ghcr.io/thangninjazz/happywish-web:latest
     build:
       context: .
       dockerfile: Dockerfile
