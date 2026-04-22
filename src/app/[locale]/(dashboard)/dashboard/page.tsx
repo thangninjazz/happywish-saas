@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from '@/i18n/routing';
 import { Eye, Edit, Trash2, ExternalLink } from 'lucide-react';
@@ -30,9 +30,9 @@ export default async function DashboardPage() {
           <h1 className="text-3xl font-bold">My Dashboard</h1>
           <p className="text-muted-foreground">Manage your greeting websites</p>
         </div>
-        <Button asChild>
-          <Link href="/templates">Create New</Link>
-        </Button>
+        <Link href="/templates" className={buttonVariants({ variant: "default" })}>
+          Create New
+        </Link>
       </div>
 
       {wishes && wishes.length > 0 ? (
@@ -67,11 +67,9 @@ export default async function DashboardPage() {
                 )}
               </CardContent>
               <CardFooter className="pt-4 flex justify-between border-t gap-2 bg-muted/20">
-                 <Button variant="ghost" size="sm" asChild>
-                   <Link href={`/${user.id}/${wish.slug}`} target="_blank">
-                      <ExternalLink size={16} className="mr-1" /> View
-                   </Link>
-                 </Button>
+                 <Link href={`/${user.id}/${wish.slug}`} target="_blank" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                    <ExternalLink size={16} className="mr-1" /> View
+                 </Link>
                  {/* 
                    Normally we would need a proper username for the link. 
                    For now using user.id or creating a placeholder route.
@@ -92,9 +90,9 @@ export default async function DashboardPage() {
         <div className="text-center py-20 bg-card rounded-xl border border-dashed shadow-sm">
           <h2 className="text-xl font-semibold mb-2">No greetings yet</h2>
           <p className="text-muted-foreground mb-6">Create your first personalized greeting website now!</p>
-          <Button asChild>
-            <Link href="/templates">Browse Templates</Link>
-          </Button>
+          <Link href="/templates" className={buttonVariants({ variant: "default" })}>
+            Browse Templates
+          </Link>
         </div>
       )}
     </div>

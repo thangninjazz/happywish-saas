@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/routing";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 
 export interface TemplateType {
@@ -44,16 +44,12 @@ export function TemplateCard({ template }: { template: TemplateType }) {
       </CardContent>
       
       <CardFooter className="p-4 pt-0 flex gap-2">
-        <Button asChild variant="outline" className="w-full">
-          <Link href={`/templates/${template.slug}/preview`}>
-            Preview
-          </Link>
-        </Button>
-        <Button asChild className="w-full">
-          <Link href={`/create/${template.slug}`}>
-            Choose
-          </Link>
-        </Button>
+        <Link href={`/templates/${template.slug}/preview`} className={buttonVariants({ variant: "outline", className: "w-full" })}>
+          Preview
+        </Link>
+        <Link href={`/create/${template.slug}`} className={buttonVariants({ variant: "default", className: "w-full" })}>
+          Choose
+        </Link>
       </CardFooter>
     </Card>
   );
