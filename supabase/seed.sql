@@ -20,5 +20,27 @@ VALUES (
   'https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=600&auto=format&fit=crop'
 );
 
+-- Demo Template 3
+INSERT INTO public.templates (slug, title, category, price, is_active, thumbnail_url)
+VALUES (
+  'wedding-romantic', 
+  'Romantic Wedding', 
+  'wedding', 
+  99000, 
+  true,
+  'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop'
+);
+
+-- Demo Template 4
+INSERT INTO public.templates (slug, title, category, price, is_active, thumbnail_url)
+VALUES (
+  'baby-cute', 
+  'Cute Baby Celebration', 
+  'baby', 
+  30000, 
+  true,
+  'https://images.unsplash.com/photo-1530652101053-8c0db4fbb5de?q=80&w=600&auto=format&fit=crop'
+);
+
 -- Note: Admin user creation should be done via the Supabase Auth UI or API, 
 -- and then their role can be updated in the public.users table.

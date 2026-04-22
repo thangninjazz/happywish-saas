@@ -31,6 +31,22 @@ const templates = [
     price: 50000,
     is_active: true,
     thumbnail_url: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+    slug: 'wedding-romantic',
+    title: 'Romantic Wedding',
+    category: 'wedding',
+    price: 99000,
+    is_active: true,
+    thumbnail_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+    slug: 'baby-cute',
+    title: 'Cute Baby Celebration',
+    category: 'baby',
+    price: 30000,
+    is_active: true,
+    thumbnail_url: 'https://images.unsplash.com/photo-1530652101053-8c0db4fbb5de?q=80&w=600&auto=format&fit=crop'
   }
 ];
 
