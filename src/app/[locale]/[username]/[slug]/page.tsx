@@ -6,7 +6,7 @@ import crypto from 'crypto';
 export default async function PublicGreetingPage({
   params,
 }: {
-  params: { username: string; slug: string; locale: string };
+  params: Promise<{ username: string; slug: string; locale: string }>;
 }) {
   const { username, slug } = await params;
   const supabase = await createClient();

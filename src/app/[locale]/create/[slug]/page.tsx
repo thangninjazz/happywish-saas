@@ -5,7 +5,7 @@ import { GreetingBuilder } from '@/components/builder/GreetingBuilder';
 export default async function CreateGreetingPage({
   params,
 }: {
-  params: { slug: string; locale: string };
+  params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug } = await params;
   const supabase = await createClient();
