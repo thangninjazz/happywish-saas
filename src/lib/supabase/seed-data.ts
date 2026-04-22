@@ -2,16 +2,13 @@ import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
 import path from 'path';
 
-// Load environment variables from .env file
+// Load environment variables from .env file if it exists (local development)
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 console.log('Connecting to Supabase:', supabaseUrl);
-if (!supabaseServiceRoleKey) {
-  console.log('Warning: SUPABASE_SERVICE_ROLE_KEY is not defined!');
-}
 
 if (!supabaseUrl || !supabaseServiceRoleKey) {
   console.error('Missing environment variables: NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
@@ -19,6 +16,9 @@ if (!supabaseUrl || !supabaseServiceRoleKey) {
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+
+// Admin user to ensure access
+const ADMIN_EMAIL = 'thang.dv220620001@gmail.com';
 
 const templates = [
   {
@@ -64,8 +64,10 @@ const templates = [
 ];
 
 async function seed() {
+  console.log('--- Database Seeding ---');
+
+  // 1. Seed Templates
   console.log('Seeding templates...');
-  
   for (const template of templates) {
     const { error } = await supabase
       .from('templates')
@@ -77,8 +79,25 @@ async function seed() {
       console.log(`Successfully seeded template: ${template.slug}`);
     }
   }
+
+  // 2. Ensure Admin User Access
+  console.log(`Ensuring admin access for: ${ADMIN_EMAIL}`);
   
-  console.log('Seed completed!');
+  // Try to find the user in auth.users first to get their ID if possible
+  // However, we can just upsert into public.users based on email if we handle ID carefully
+  // For now, let's update any existing user with this email to be admin
+  const { data: userData, error: userError } = await supabase
+    .from('users')
+    .update({ role: 'admin' })
+    .eq('email', ADMIN_EMAIL);
+
+  if (userError) {
+    console.error('Error updating admin role:', userError.message);
+  } else {
+    console.log('Admin role updated/verified for', ADMIN_EMAIL);
+  }
+  
+  console.log('--- Seed Completed ---');
 }
 
 seed();
