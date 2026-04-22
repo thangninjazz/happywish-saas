@@ -8,9 +8,10 @@ import Image from 'next/image';
 
 interface PublicGreetingProps {
   wish: any;
+  isPreview?: boolean;
 }
 
-export function PublicGreeting({ wish }: PublicGreetingProps) {
+export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
@@ -171,6 +172,36 @@ export function PublicGreeting({ wish }: PublicGreetingProps) {
            <div className="absolute top-[10%] left-[20%] w-64 h-64 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-blob" style={{ backgroundColor: wish.theme_color }} />
            <div className="absolute top-[40%] right-[20%] w-72 h-72 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-blob animation-delay-2000" style={{ backgroundColor: wish.theme_color }} />
            <div className="absolute bottom-[10%] left-[40%] w-80 h-80 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-blob animation-delay-4000" style={{ backgroundColor: wish.theme_color }} />
+           
+           {/* Particles/Hearts effect */}
+           <div className="absolute inset-0 overflow-hidden">
+             {[...Array(15)].map((_, i) => (
+               <motion.div
+                 key={i}
+                 initial={{ 
+                   x: Math.random() * 100 + '%', 
+                   y: '110%', 
+                   scale: Math.random() * 0.5 + 0.5,
+                   opacity: 0 
+                 }}
+                 animate={{ 
+                   y: '-10%', 
+                   opacity: [0, 0.5, 0],
+                   rotate: 360 
+                 }}
+                 transition={{ 
+                   duration: Math.random() * 10 + 10, 
+                   repeat: Infinity, 
+                   delay: Math.random() * 20,
+                   ease: "linear" 
+                 }}
+                 className="absolute text-2xl"
+                 style={{ color: wish.theme_color }}
+               >
+                 ✨
+               </motion.div>
+             ))}
+           </div>
         </div>
       )}
     </div>
