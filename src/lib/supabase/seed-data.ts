@@ -2,22 +2,25 @@ import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
 import path from 'path';
 
-// Load environment variables from .env file if it exists (local development)
+// Load environment variables
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-console.log('Connecting to Supabase:', supabaseUrl);
-
 if (!supabaseUrl || !supabaseServiceRoleKey) {
-  console.error('Missing environment variables: NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+  console.error('CRITICAL: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
   process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+// Use Service Role Key for admin bypass
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
 
-// Admin user to ensure access
 const ADMIN_EMAIL = 'thang.dv220620001@gmail.com';
 
 const templates = [
@@ -64,40 +67,52 @@ const templates = [
 ];
 
 async function seed() {
-  console.log('--- Database Seeding ---');
-
-  // 1. Seed Templates
-  console.log('Seeding templates...');
-  for (const template of templates) {
-    const { error } = await supabase
+  console.log('--- STARTING DATABASE SEED ---');
+  
+  try {
+    // 1. Seed Templates
+    console.log('Seeding templates...');
+    const { data: tData, error: tError } = await supabase
       .from('templates')
-      .upsert(template, { onConflict: 'slug' });
+      .upsert(templates, { onConflict: 'slug' })
+      .select();
     
-    if (error) {
-      console.error(`Error seeding template ${template.slug}:`, error.message);
+    if (tError) throw new Error(`Templates seed failed: ${tError.message}`);
+    console.log(`Successfully seeded ${tData?.length} templates.`);
+
+    // 2. Ensure Admin User Access
+    console.log(`Searching for user with email: ${ADMIN_EMAIL}...`);
+    
+    // List users from Auth to find the UUID
+    const { data: { users }, error: listError } = await supabase.auth.admin.listUsers();
+    
+    if (listError) throw new Error(`Auth list failed: ${listError.message}`);
+    
+    const targetUser = users.find(u => u.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+    
+    if (targetUser) {
+      console.log(`Found User ID: ${targetUser.id}. Upserting into public.users...`);
+      const { error: upsertError } = await supabase
+        .from('users')
+        .upsert({
+          id: targetUser.id,
+          email: targetUser.email,
+          role: 'admin',
+          full_name: targetUser.user_metadata?.full_name || 'Admin User'
+        });
+      
+      if (upsertError) throw new Error(`User upsert failed: ${upsertError.message}`);
+      console.log('Admin role verified and upserted successfully.');
     } else {
-      console.log(`Successfully seeded template: ${template.slug}`);
+      console.log(`Warning: User ${ADMIN_EMAIL} not found in Supabase Auth. Please sign up first.`);
     }
-  }
 
-  // 2. Ensure Admin User Access
-  console.log(`Ensuring admin access for: ${ADMIN_EMAIL}`);
-  
-  // Try to find the user in auth.users first to get their ID if possible
-  // However, we can just upsert into public.users based on email if we handle ID carefully
-  // For now, let's update any existing user with this email to be admin
-  const { data: userData, error: userError } = await supabase
-    .from('users')
-    .update({ role: 'admin' })
-    .eq('email', ADMIN_EMAIL);
-
-  if (userError) {
-    console.error('Error updating admin role:', userError.message);
-  } else {
-    console.log('Admin role updated/verified for', ADMIN_EMAIL);
+    console.log('--- SEED COMPLETED SUCCESSFULLY ---');
+  } catch (err: any) {
+    console.error('--- SEED FAILED ---');
+    console.error(err.message);
+    process.exit(1);
   }
-  
-  console.log('--- Seed Completed ---');
 }
 
 seed();
