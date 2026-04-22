@@ -17,6 +17,7 @@ export interface Wish {
   templates?: {
     slug: string;
     title: string;
+    category: string;
   };
 }
 
