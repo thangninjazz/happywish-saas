@@ -103,6 +103,22 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
             <p className="mt-12 text-sm opacity-50 animate-pulse">Tap to open</p>
           </motion.div>
         ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative z-10"
+          >
+            {audio && (
+              <button 
+                onClick={toggleAudio}
+                className="absolute top-6 right-6 p-3 rounded-full bg-background/50 backdrop-blur-md border shadow-sm hover:bg-background/80 transition-colors z-50 text-foreground"
+              >
+                {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+              </button>
+            )}
+
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
