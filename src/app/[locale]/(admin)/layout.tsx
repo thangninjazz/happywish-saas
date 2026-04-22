@@ -45,14 +45,9 @@ export default async function AdminLayout({
           <p className="text-muted-foreground mb-6">Bạn không có quyền truy cập vào khu vực quản trị này.</p>
           
           <div className="bg-muted/50 rounded-2xl p-4 mb-8 text-left space-y-2 border border-border/50">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Email:</span>
-              <span className="font-medium">{user.email}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Role nhận diện:</span>
-              <span className="font-bold text-destructive uppercase">{userData?.role || 'null/undefined'}</span>
-            </div>
+            <p className="text-sm text-muted-foreground mt-1">Email: <span className="font-mono text-foreground">{user?.email}</span></p>
+            <p className="text-sm text-muted-foreground mt-1">User ID: <span className="font-mono text-xs text-foreground">{user?.id}</span></p>
+            <p className="text-sm text-muted-foreground">Role nhận diện: <span className="font-bold text-destructive">{userData?.role || 'null/undefined'}</span></p>
           </div>
 
           <div className="flex flex-col gap-3">
