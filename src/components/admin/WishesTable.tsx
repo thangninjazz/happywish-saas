@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useTransition } from 'react';
+import { deleteWish } from '@/app/actions/admin';
 import { 
   Table, 
   TableBody, 
@@ -32,6 +33,7 @@ interface Wish {
 export function WishesTable({ initialWishes }: { initialWishes: Wish[] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [isPending, startTransition] = useTransition();
 
   const filteredWishes = useMemo(() => {
     return initialWishes.filter(wish => {
@@ -52,8 +54,15 @@ export function WishesTable({ initialWishes }: { initialWishes: Wish[] }) {
   }, [initialWishes, searchTerm, statusFilter]);
 
   const handleDelete = (id: string) => {
-    if (confirm('Bạn có chắc chắn muốn xóa lời chúc này?')) {
-      alert(`Đã xóa lời chúc ${id} (giả định)`);
+    if (confirm('Bạn có chắc chắn muốn xóa lời chúc này? Hành động này không thể hoàn tác.')) {
+      startTransition(async () => {
+        const result = await deleteWish(id);
+        if (!result.success) {
+          alert('Lỗi khi xóa: ' + result.error);
+        } else {
+          alert('Đã xóa thành công!');
+        }
+      });
     }
   };
 
@@ -145,8 +154,9 @@ export function WishesTable({ initialWishes }: { initialWishes: Wish[] }) {
                             <ExternalLink className="w-4 h-4" />
                           </Link>
                           <button 
+                            disabled={isPending}
                             onClick={() => handleDelete(wish.id)}
-                            className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-destructive"
+                            className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-destructive disabled:opacity-50"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

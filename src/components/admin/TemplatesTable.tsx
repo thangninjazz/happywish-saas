@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useTransition } from 'react';
+import { toggleTemplateStatus, deleteTemplate } from '@/app/actions/admin';
 import { 
   Table, 
   TableBody, 
@@ -11,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Plus, MoreHorizontal, Image as ImageIcon, Search, Filter } from 'lucide-react';
+import { Plus, Trash2, Power, PowerOff, Image as ImageIcon, Search, Filter } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Template {
@@ -27,6 +28,27 @@ interface Template {
 export function TemplatesTable({ initialTemplates }: { initialTemplates: Template[] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [isPending, startTransition] = useTransition();
+
+  const handleToggleStatus = (id: string, currentStatus: boolean) => {
+    startTransition(async () => {
+      const result = await toggleTemplateStatus(id, !currentStatus);
+      if (!result.success) alert('Lỗi: ' + result.error);
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm('Bạn có chắc chắn muốn xóa mẫu thiết kế này? Hành động này sẽ xóa dữ liệu liên quan.')) {
+      startTransition(async () => {
+        const result = await deleteTemplate(id);
+        if (!result.success) {
+          alert('Lỗi khi xóa: ' + result.error);
+        } else {
+          alert('Đã xóa thành công!');
+        }
+      });
+    }
+  };
 
   const categories = useMemo(() => {
     const cats = new Set(initialTemplates.map(t => t.category));
@@ -143,9 +165,24 @@ export function TemplatesTable({ initialTemplates }: { initialTemplates: Templat
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <button className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground">
-                          <MoreHorizontal className="w-5 h-5" />
-                        </button>
+                        <div className="flex justify-end gap-2">
+                          <button 
+                            disabled={isPending}
+                            onClick={() => handleToggleStatus(template.id, template.is_active)}
+                            className="p-2 hover:bg-muted rounded-lg transition-colors text-primary disabled:opacity-50"
+                            title={template.is_active ? "Tắt" : "Bật"}
+                          >
+                            {template.is_active ? <PowerOff className="w-4 h-4 text-amber-500" /> : <Power className="w-4 h-4 text-green-500" />}
+                          </button>
+                          <button 
+                            disabled={isPending}
+                            onClick={() => handleDelete(template.id)}
+                            className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-destructive disabled:opacity-50"
+                            title="Xóa"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useTransition } from 'react';
+import { updateOrderStatus } from '@/app/actions/admin';
 import { 
   Table, 
   TableBody, 
@@ -31,6 +32,18 @@ interface Order {
 export function OrdersTable({ initialOrders }: { initialOrders: Order[] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [isPending, startTransition] = useTransition();
+
+  const handleStatusChange = (orderId: string, newStatus: string) => {
+    startTransition(async () => {
+      const result = await updateOrderStatus(orderId, newStatus);
+      if (!result.success) {
+        alert('Lỗi cập nhật trạng thái: ' + result.error);
+      } else {
+        alert('Đã cập nhật trạng thái thành công!');
+      }
+    });
+  };
 
   const filteredOrders = useMemo(() => {
     return initialOrders.filter(order => {
@@ -141,9 +154,16 @@ export function OrdersTable({ initialOrders }: { initialOrders: Order[] }) {
                         {getStatusBadge(order.payment_status)}
                       </TableCell>
                       <TableCell className="text-right">
-                        <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-                          <MoreHorizontal className="w-5 h-5 text-muted-foreground" />
-                        </button>
+                        <select
+                          disabled={isPending}
+                          value={order.payment_status}
+                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                          className="text-sm p-2 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors cursor-pointer outline-none"
+                        >
+                          <option value="pending">Đang chờ</option>
+                          <option value="completed">Thành công</option>
+                          <option value="failed">Thất bại</option>
+                        </select>
                       </TableCell>
                     </TableRow>
                   ))

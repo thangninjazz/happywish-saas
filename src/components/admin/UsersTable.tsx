@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useTransition } from 'react';
+import { updateUserRole } from '@/app/actions/admin';
 import { 
   Table, 
   TableBody, 
@@ -25,6 +26,18 @@ interface User {
 export function UsersTable({ initialUsers }: { initialUsers: User[] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'user'>('all');
+  const [isPending, startTransition] = useTransition();
+
+  const handleRoleChange = (userId: string, newRole: string) => {
+    startTransition(async () => {
+      const result = await updateUserRole(userId, newRole);
+      if (!result.success) {
+        alert('Lỗi cập nhật vai trò: ' + result.error);
+      } else {
+        alert('Đã cập nhật vai trò thành công!');
+      }
+    });
+  };
 
   const filteredUsers = useMemo(() => {
     return initialUsers.filter(user => {
@@ -39,11 +52,7 @@ export function UsersTable({ initialUsers }: { initialUsers: User[] }) {
   }, [initialUsers, searchTerm, roleFilter]);
 
   const handleAddUser = () => {
-    alert('Chức năng thêm người dùng sẽ được cập nhật sớm!');
-  };
-
-  const handleAction = (userId: string) => {
-    alert(`Thao tác với người dùng ID: ${userId}`);
+    alert('Chức năng thêm người dùng từ admin chưa được hỗ trợ. Hãy dùng trang đăng ký.');
   };
 
   return (
@@ -127,12 +136,15 @@ export function UsersTable({ initialUsers }: { initialUsers: User[] }) {
                         {new Date(user.created_at).toLocaleDateString('vi-VN')}
                       </TableCell>
                       <TableCell className="text-right">
-                        <button 
-                          onClick={() => handleAction(user.id)}
-                          className="p-2 hover:bg-muted rounded-lg transition-colors group-hover:text-primary"
+                        <select
+                          disabled={isPending}
+                          value={user.role || 'user'}
+                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                          className="text-sm p-2 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors cursor-pointer outline-none"
                         >
-                          <MoreHorizontal className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
-                        </button>
+                          <option value="user">User</option>
+                          <option value="admin">Admin</option>
+                        </select>
                       </TableCell>
                     </TableRow>
                   ))
