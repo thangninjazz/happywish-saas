@@ -4,11 +4,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        # Nếu build trực tiếp trên VPS thì bỏ comment và thêm giá trị
-        # NEXT_PUBLIC_SUPABASE_URL: "your_url"
-        # NEXT_PUBLIC_SUPABASE_ANON_KEY: "your_key"
-        # NEXT_PUBLIC_SITE_URL: "https://yourdomain.com"
+#      args:
+#        # Nếu build trực tiếp trên VPS thì bỏ comment và thêm giá trị
+#        # NEXT_PUBLIC_SUPABASE_URL: "your_url"
+#        # NEXT_PUBLIC_SUPABASE_ANON_KEY: "your_key"
+#        # NEXT_PUBLIC_SITE_URL: "https://yourdomain.com"
     container_name: happywish_web
     restart: always
     ports:
