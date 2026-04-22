@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Nếu build trực tiếp trên VPS thì bỏ comment và thêm giá trị
+        # NEXT_PUBLIC_SUPABASE_URL: "your_url"
+        # NEXT_PUBLIC_SUPABASE_ANON_KEY: "your_key"
+        # NEXT_PUBLIC_SITE_URL: "https://yourdomain.com"
+    container_name: happywish_web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    # env_file:
+    #   - .env.local
+
+  # Optional Nginx if you want to run Nginx in Docker as reverse proxy
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
+  #   depends_on:
+  #     - web
