@@ -4,9 +4,9 @@ import { Link } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo, useCallback } from 'react';
 
-export function Header() {
+const Header = memo(function Header() {
   const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
   const supabase = createClient();
@@ -27,10 +27,10 @@ export function Header() {
     };
   }, [supabase.auth]);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     await supabase.auth.signOut();
     window.location.href = '/';
-  };
+  }, [supabase.auth]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
@@ -83,4 +83,6 @@ export function Header() {
       </div>
     </header>
   );
-}
+});
+
+export { Header };

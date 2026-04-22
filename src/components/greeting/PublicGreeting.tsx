@@ -1,17 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Gift, Play, Pause } from 'lucide-react';
 import Image from 'next/image';
 
+export interface Wish {
+  music_url?: string;
+  theme_color: string;
+  recipient_name: string;
+  wish_media?: { url: string }[];
+  message: string;
+  sender_name?: string;
+  event_date?: string;
+}
+
 interface PublicGreetingProps {
-  wish: any;
+  wish: Wish;
   isPreview?: boolean;
 }
 
-export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps) {
+const PublicGreeting = memo(function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
@@ -40,14 +50,14 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
     };
   }, [wish.music_url]);
 
-  const handleOpenGift = () => {
+  const handleOpenGift = useCallback(() => {
     setIsOpen(true);
     triggerConfetti();
     setIsPlaying(true);
     if (audio) {
       audio.play().catch(e => console.error("Audio play failed:", e));
     }
-  };
+  }, [audio]);
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
@@ -75,9 +85,9 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
     }, 250);
   };
 
-  const toggleAudio = () => {
+  const toggleAudio = useCallback(() => {
     if (ytId) {
-      setIsPlaying(!isPlaying);
+      setIsPlaying(prev => !prev);
       return;
     }
     if (!audio) return;
@@ -86,8 +96,8 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
     } else {
       audio.play();
     }
-    setIsPlaying(!isPlaying);
-  };
+    setIsPlaying(prev => !prev);
+  }, [ytId, audio, isPlaying]);
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: isOpen ? wish.theme_color + '15' : '#0a0a0a' }}>
@@ -138,6 +148,7 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
               <button 
                 onClick={toggleAudio}
                 className="absolute top-6 right-6 p-3 rounded-full bg-background/50 backdrop-blur-md border shadow-sm hover:bg-background/80 transition-colors z-50 text-foreground"
+                aria-label={isPlaying ? "Pause music" : "Play music"}
               >
                 {isPlaying ? <Pause size={20} /> : <Play size={20} />}
               </button>
@@ -166,10 +177,15 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
                 {wish.wish_media.map((media: any, idx: number) => (
                   <div 
                     key={idx} 
-                    className="flex-shrink-0 w-64 h-80 rounded-2xl overflow-hidden shadow-2xl border-4 border-white rotate-1 hover:rotate-0 transition-transform duration-500"
+                    className="relative flex-shrink-0 w-64 h-80 rounded-2xl overflow-hidden shadow-2xl border-4 border-white rotate-1 hover:rotate-0 transition-transform duration-500"
                     style={{ transform: `rotate(${idx % 2 === 0 ? '2deg' : '-2deg'})` }}
                   >
-                    <img src={media.url} alt="Memory" className="w-full h-full object-cover" />
+                    <Image 
+                      src={media.url} 
+                      alt={`Memory ${idx + 1}`} 
+                      fill
+                      className="object-cover" 
+                    />
                   </div>
                 ))}
               </motion.div>
@@ -252,4 +268,6 @@ export function PublicGreeting({ wish, isPreview = false }: PublicGreetingProps)
       )}
     </div>
   );
-}
+});
+
+export { PublicGreeting };

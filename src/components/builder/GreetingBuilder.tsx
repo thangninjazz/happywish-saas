@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,7 @@ interface GreetingBuilderProps {
   user: any;
 }
 
-export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
+const GreetingBuilder = memo(function GreetingBuilder({ template, user }: GreetingBuilderProps) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -34,15 +34,15 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
 
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  const handleNext = () => setStep((s) => Math.min(s + 1, 4));
-  const handlePrev = () => setStep((s) => Math.max(s - 1, 1));
+  const handleNext = useCallback(() => setStep((s) => Math.min(s + 1, 4)), []);
+  const handlePrev = useCallback(() => setStep((s) => Math.max(s - 1, 1)), []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     setLoading(true);
     
     // 1. Generate unique slug
@@ -104,7 +104,7 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
     // 3. Navigate to checkout (Mockup)
     alert('Mock Payment Successful! Your greeting is ready.');
     router.push(`/dashboard`); 
-  };
+  }, [formData, template, user, supabase, mediaFiles, router]);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -223,6 +223,7 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
                         }`}
                         style={{ backgroundColor: color.hex }}
                         onClick={() => setFormData({ ...formData, theme_color: color.hex })}
+                        aria-label={`Select ${color.name} theme color`}
                         title={color.name}
                       />
                     ))}
@@ -298,4 +299,6 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
       </div>
     </div>
   );
-}
+});
+
+export { GreetingBuilder };

@@ -1,4 +1,5 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/routing";
 import { buttonVariants } from "@/components/ui/button";
@@ -13,17 +14,18 @@ export interface TemplateType {
   price: number;
 }
 
-export function TemplateCard({ template }: { template: TemplateType }) {
+const TemplateCard = memo(function TemplateCard({ template }: { template: TemplateType }) {
   // Use a placeholder if no thumbnail is available
   const thumbnailUrl = template.thumbnail_url || 'https://images.unsplash.com/photo-1558486012-817176f84c6d?q=80&w=600&auto=format&fit=crop';
 
   return (
     <Card className="overflow-hidden flex flex-col group transition-all hover:shadow-xl hover:border-primary/50">
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
-        <img
+        <Image
           src={thumbnailUrl}
           alt={template.title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute top-2 right-2">
           <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">
@@ -52,4 +54,6 @@ export function TemplateCard({ template }: { template: TemplateType }) {
       </CardFooter>
     </Card>
   );
-}
+});
+
+export { TemplateCard };
