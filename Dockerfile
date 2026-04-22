@@ -1,5 +1,5 @@
 # Dockerfile cho Next.js 15
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Cài đặt dependencies cần thiết
 FROM base AS deps
@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Cài đặt dependencies dựa trên package.json
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install
 
 # Xây dựng ứng dụng
 FROM base AS builder
