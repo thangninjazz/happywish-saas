@@ -34,16 +34,41 @@ export default async function AdminLayout({
 
   if (userData?.role !== 'admin') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center p-8 max-w-md bg-card rounded-2xl shadow-xl border border-destructive/20">
-          <h1 className="text-3xl font-bold text-destructive mb-2">Access Denied</h1>
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <div className="text-center p-8 max-w-md w-full bg-card rounded-3xl shadow-2xl border border-destructive/10 animate-in fade-in zoom-in duration-500">
+          <div className="w-20 h-20 bg-destructive/10 text-destructive rounded-full flex items-center justify-center mx-auto mb-6">
+            <LogOut className="w-10 h-10" />
+          </div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Access Denied</h1>
           <p className="text-muted-foreground mb-6">Bạn không có quyền truy cập vào khu vực quản trị này.</p>
-          <Link 
-            href="/" 
-            className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium transition-transform hover:scale-105 active:scale-95"
-          >
-            Quay lại trang chủ
-          </Link>
+          
+          <div className="bg-muted/50 rounded-2xl p-4 mb-8 text-left space-y-2 border border-border/50">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Email:</span>
+              <span className="font-medium">{user.email}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Role nhận diện:</span>
+              <span className="font-bold text-destructive uppercase">{userData?.role || 'null/undefined'}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Link 
+              href="/" 
+              className="inline-flex items-center justify-center px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-semibold transition-all hover:opacity-90 active:scale-95 shadow-lg shadow-primary/25"
+            >
+              Quay lại trang chủ
+            </Link>
+            <form action="/api/auth/signout" method="post">
+              <button
+                type="submit"
+                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+              >
+                Đăng xuất và thử lại
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     );
