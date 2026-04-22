@@ -60,7 +60,7 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
         event_date: formData.event_date || null,
         theme_color: formData.theme_color,
         music_url: formData.music_url,
-        status: 'draft' // Payment pending
+        status: 'active' // Set directly to active since payment is mocked
       })
       .select()
       .single();
@@ -75,8 +75,6 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
     }
 
     // 3. Navigate to checkout (Mockup)
-    // For now, we just activate it and redirect to success
-    await supabase.from('wishes').update({ status: 'active' }).eq('id', data.id);
     alert('Mock Payment Successful! Your greeting is ready.');
     router.push(`/dashboard`); 
   };
