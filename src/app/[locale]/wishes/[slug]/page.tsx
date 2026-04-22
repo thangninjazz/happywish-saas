@@ -18,7 +18,18 @@ export default async function WishPage({
     .single();
 
   if (error || !wish) {
-    notFound();
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8 bg-red-50 text-red-900">
+        <div className="max-w-2xl bg-white p-8 rounded-xl shadow-lg border border-red-200">
+          <h1 className="text-2xl font-bold mb-4">Lỗi tải dữ liệu thiệp</h1>
+          <p className="mb-4">Hệ thống không thể tải thiệp của bạn. Dưới đây là thông báo lỗi từ Database để kỹ thuật viên kiểm tra:</p>
+          <pre className="bg-red-100 p-4 rounded text-sm overflow-auto mb-4">
+            {JSON.stringify(error || { message: "Không tìm thấy thiệp (wish is null)" }, null, 2)}
+          </pre>
+          <p className="text-sm opacity-70">Slug truy cập: {slug}</p>
+        </div>
+      </div>
+    );
   }
 
   // Check if wish is active (unless preview/admin?)

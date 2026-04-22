@@ -20,11 +20,10 @@ export function TemplateCard({ template }: { template: TemplateType }) {
   return (
     <Card className="overflow-hidden flex flex-col group transition-all hover:shadow-xl hover:border-primary/50">
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
-        <Image
+        <img
           src={thumbnailUrl}
           alt={template.title}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute top-2 right-2">
           <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">
