@@ -69,7 +69,8 @@ export function GreetingBuilder({ template, user }: GreetingBuilderProps) {
 
     if (error) {
       console.error('Error saving wish:', error);
-      alert('Failed to save your greeting. Please try again.');
+      alert(`Lỗi khi lưu: ${error.message} (${error.code})`);
+      setLoading(false);
       return;
     }
 
