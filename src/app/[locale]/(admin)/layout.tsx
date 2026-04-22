@@ -48,7 +48,10 @@ export default async function AdminLayout({
             <p className="text-sm text-muted-foreground mt-1">Email: <span className="font-mono text-foreground">{user?.email}</span></p>
             <p className="text-sm text-muted-foreground mt-1">User ID: <span className="font-mono text-xs text-foreground">{user?.id}</span></p>
             <p className="text-sm text-muted-foreground mt-1">Supabase Target: <span className="font-mono text-xs text-foreground">{process.env.NEXT_PUBLIC_SUPABASE_URL?.split('.')[0]}...</span></p>
-            <p className="text-sm text-muted-foreground">Role nhận diện: <span className="font-bold text-destructive">{userData?.role || 'null/undefined'}</span></p>
+            <p className="text-sm text-muted-foreground mt-1">Role nhận diện: <span className="font-bold text-destructive">{userData?.role || 'null/undefined'}</span></p>
+            <p className="text-sm text-muted-foreground mt-1 break-all text-red-500">
+              DB Error: {roleError ? JSON.stringify(roleError) : 'None (No Data Returned)'}
+            </p>
           </div>
 
           <div className="flex flex-col gap-3">

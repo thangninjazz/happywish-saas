@@ -40,6 +40,11 @@ export default async function TemplatesPage() {
       ) : (
         <div className="text-center py-20 bg-muted/30 rounded-xl border border-dashed border-border">
           <p className="text-muted-foreground">No templates available at the moment. Please check back later!</p>
+          {error && (
+            <p className="mt-4 text-sm text-red-500 break-all p-4 bg-red-500/10 rounded-lg inline-block">
+              DB Error: {JSON.stringify(error)}
+            </p>
+          )}
         </div>
       )}
     </div>
