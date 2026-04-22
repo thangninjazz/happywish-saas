@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { PublicGreeting } from '@/components/greeting/PublicGreeting';
+import { Link } from '@/i18n/routing';
+import { buttonVariants } from '@/components/ui/button';
 
 export default async function TemplatePreviewPage({
   params,
@@ -38,9 +40,20 @@ export default async function TemplatePreviewPage({
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="bg-primary/10 py-2 text-center text-sm font-medium border-b">
-        Chế độ xem trước: Mẫu "{template.title}"
+    <div className="min-h-screen relative">
+      <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[100] flex gap-4">
+        <div className="bg-background/80 backdrop-blur-md px-6 py-3 rounded-full border shadow-xl flex items-center gap-6">
+          <span className="text-sm font-semibold hidden md:inline">Đang xem mẫu: {template.title}</span>
+          <Link 
+            href={`/create/${template.slug}`} 
+            className={buttonVariants({ variant: "default", className: "rounded-full px-8 shadow-lg shadow-primary/25" })}
+          >
+            Dùng mẫu này ngay
+          </Link>
+          <Link href="/templates" className="text-sm text-muted-foreground hover:text-foreground">
+            Quay lại
+          </Link>
+        </div>
       </div>
       <PublicGreeting wish={dummyWish as any} isPreview={true} />
     </div>

@@ -48,7 +48,7 @@ export function TemplateCard({ template }: { template: TemplateType }) {
           Preview
         </Link>
         <Link href={`/create/${template.slug}`} className={buttonVariants({ variant: "default", className: "w-full" })}>
-          Choose
+          Dùng mẫu này
         </Link>
       </CardFooter>
     </Card>
