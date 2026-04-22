@@ -32,17 +32,21 @@ export const HeartCanvas = () => {
       clone() {
         return new Point(this.x, this.y);
       }
-      length(length?: number) {
-        if (length === undefined) return Math.sqrt(this.x * this.x + this.y * this.y);
+      getLength() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+      }
+      setLength(length: number) {
         this.normalize();
         this.x *= length;
         this.y *= length;
         return this;
       }
       normalize() {
-        const len = this.length() as number;
-        this.x /= len;
-        this.y /= len;
+        const len = this.getLength();
+        if (len !== 0) {
+          this.x /= len;
+          this.y /= len;
+        }
         return this;
       }
     }
@@ -161,7 +165,7 @@ export const HeartCanvas = () => {
       const amount = particleRate * deltaTime;
       for (let i = 0; i < amount; i++) {
         const pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
-        const dir = pos.clone().length(settings.particles.velocity);
+        const dir = pos.clone().setLength(settings.particles.velocity);
         pool.add(canvas.width / 2 + pos.x, canvas.height / 2 - pos.y, dir.x, -dir.y);
       }
       pool.update(deltaTime);
